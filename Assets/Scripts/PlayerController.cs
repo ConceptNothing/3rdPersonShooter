@@ -15,6 +15,14 @@ public class PlayerController : MonoBehaviour
     private float rotationSpeed;
     [SerializeField]
     private float playerSpeed=7f;
+    [SerializeField]
+    private float sprintSpeedMultiplier=1.5f;
+    [SerializeField]
+    private float maxStamina = 100f;
+    [SerializeField]
+    private float sprintStaminaDrain=20f;
+    [SerializeField]
+    private float staminaRegen=10f;
 
     private Transform cameraTransform;
     private PlayerInput playerInput;
@@ -27,6 +35,9 @@ public class PlayerController : MonoBehaviour
     private InputAction aimAction;
     private InputAction sprintAction;
     private InputAction shootAction;
+    private bool isSprinting;
+    private float currentStamina;
+
 
     // Start is called before the first frame update
     void Start()
@@ -40,6 +51,8 @@ public class PlayerController : MonoBehaviour
         sprintAction = playerInput.actions["Sprint"];
         shootAction = playerInput.actions["Shoot"];
         cameraTransform= Camera.main.transform;
+
+        currentStamina = maxStamina;
     }
 
     // Update is called once per frame
@@ -54,8 +67,35 @@ public class PlayerController : MonoBehaviour
         Vector2 input=moveAction.ReadValue<Vector2>();
         Vector3 move = new Vector3(input.x, 0, input.y);
         move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;
+
+        // Check if player is sprinting
+        float sprintValue = sprintAction.ReadValue<float>();
+        if (sprintValue > 0.1f && isGrounded && currentStamina>0)
+        {
+            isSprinting = true;
+            currentStamina -= Time.deltaTime * sprintStaminaDrain;
+            move *= sprintSpeedMultiplier;
+
+            //stop sprint if stamina reaches < 0
+            if (currentStamina < 0)
+            {
+                currentStamina = 0;
+                isSprinting = false;
+            }
+        }
+        else
+        {
+            isSprinting = false;
+            currentStamina += Time.deltaTime * staminaRegen;
+            if (currentStamina > maxStamina)
+            {
+                currentStamina = maxStamina;
+            }
+        }
+
+
         move.y = 0f;
-        controller.Move(move * Time.deltaTime * playerSpeed);
+        controller.Move(move * Time.deltaTime * (isSprinting ? playerSpeed * sprintSpeedMultiplier : playerSpeed));
 
         if (jumpAction.triggered && isGrounded)
         {
@@ -68,5 +108,14 @@ public class PlayerController : MonoBehaviour
         // Towards cam direction
         Quaternion rotation=Quaternion.Euler(0, cameraTransform.eulerAngles.y, 0);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
+    }
+
+    public float GetStamina()
+    {
+        return currentStamina;
+    }
+    public float GetMaxStamina()
+    {
+        return maxStamina;
     }
 }

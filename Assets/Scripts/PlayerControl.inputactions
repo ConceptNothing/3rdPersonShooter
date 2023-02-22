@@ -141,8 +141,8 @@
                 {
                     "name": "",
                     "id": "610b6cc6-f6b6-4b04-ba31-15370a828fad",
-                    "path": "",
-                    "interactions": "",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "Hold",
                     "processors": "",
                     "groups": "",
                     "action": "Sprint",
