@@ -12,8 +12,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float jumpHeight=1.0f;
     [SerializeField]
-    private float playerSpeed=2.0f; 
+    private float rotationSpeed;
+    [SerializeField]
+    private float playerSpeed=7f;
 
+    private Transform cameraTransform;
     private PlayerInput playerInput;
     private CharacterController controller;
     private Vector3 playerVelocity;
@@ -36,6 +39,7 @@ public class PlayerController : MonoBehaviour
         aimAction = playerInput.actions["Aim"];
         sprintAction = playerInput.actions["Sprint"];
         shootAction = playerInput.actions["Shoot"];
+        cameraTransform= Camera.main.transform;
     }
 
     // Update is called once per frame
@@ -47,21 +51,22 @@ public class PlayerController : MonoBehaviour
             playerVelocity.y = 0f;
         }
 
-        Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
+        Vector2 input=moveAction.ReadValue<Vector2>();
+        Vector3 move = new Vector3(input.x, 0, input.y);
+        move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;
+        move.y = 0f;
         controller.Move(move * Time.deltaTime * playerSpeed);
 
-        if (move != Vector3.zero)
-        {
-            gameObject.transform.forward = move;
-        }
-
-        // Changes the height position of the player..
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (jumpAction.triggered && isGrounded)
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
         }
 
         playerVelocity.y += gravity * Time.deltaTime;
         controller.Move(playerVelocity * Time.deltaTime);
+
+        // Towards cam direction
+        Quaternion rotation=Quaternion.Euler(0, cameraTransform.eulerAngles.y, 0);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
     }
 }
