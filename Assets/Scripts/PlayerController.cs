@@ -40,9 +40,9 @@ public class PlayerController : MonoBehaviour
     private Vector3 playerVelocity;
     private bool isGrounded;
     private InputAction moveAction;
-    private InputAction mouseLookAction;
+    //private InputAction mouseLookAction;
     private InputAction jumpAction;
-    private InputAction aimAction;
+    //private InputAction aimAction;
     private InputAction sprintAction;
     private InputAction shootAction;
     private bool isSprinting;
@@ -55,9 +55,9 @@ public class PlayerController : MonoBehaviour
         controller=GetComponent<CharacterController>();
         playerInput=GetComponent<PlayerInput>();
         moveAction=playerInput.actions["Move"];
-        mouseLookAction = playerInput.actions["MouseLook"];
+        //mouseLookAction = playerInput.actions["MouseLook"];
         jumpAction = playerInput.actions["Jump"];
-        aimAction = playerInput.actions["Aim"];
+        //aimAction = playerInput.actions["Aim"];
         sprintAction = playerInput.actions["Sprint"];
         shootAction = playerInput.actions["Shoot"];
         cameraTransform= Camera.main.transform;
@@ -147,6 +147,7 @@ public class PlayerController : MonoBehaviour
         //if there has been an target (ADD LAYER MASK IF NEEDED AT THE END OF THE Physics.Raycast)
         if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, Mathf.Infinity))
         {
+            var sw = hit.rigidbody;
             bulletController.Target = hit.point;
             bulletController.Hit = true;
         }
