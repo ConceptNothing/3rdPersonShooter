@@ -48,6 +48,16 @@ public class PlayerController : MonoBehaviour
     private bool isSprinting;
     private float currentStamina;
 
+    private Animator animator;
+    private int moveXAnimationParameterId;
+    private int moveZAnimationParameterId;
+    Vector2 currentAnimationBlend;
+    Vector2 animationVelocity;
+    [SerializeField]
+    private float animationSmoothTime=0.1f;
+    private int jumpAnimation;
+    [SerializeField]
+    private float animationPlayTransition=0.1f;
 
     // Start is called before the first frame update
     void Awake()
@@ -64,6 +74,12 @@ public class PlayerController : MonoBehaviour
 
         Cursor.lockState=CursorLockMode.Locked;
         currentStamina = maxStamina;
+
+        //Animations
+        animator = GetComponent<Animator>();
+        moveXAnimationParameterId = Animator.StringToHash("MoveX");
+        moveZAnimationParameterId = Animator.StringToHash("MoveZ");
+        jumpAnimation = Animator.StringToHash("Pistol Jump");
     }
 
     private void OnEnable()
@@ -85,8 +101,9 @@ public class PlayerController : MonoBehaviour
             playerVelocity.y = 0f;
         }
 
-        Vector2 input=moveAction.ReadValue<Vector2>();
-        Vector3 move = new Vector3(input.x, 0, input.y);
+        Vector2 input = moveAction.ReadValue<Vector2>();
+        currentAnimationBlend = Vector2.SmoothDamp(currentAnimationBlend,input,ref animationVelocity,animationSmoothTime);
+        Vector3 move = new Vector3(currentAnimationBlend.x, 0, currentAnimationBlend.y);
         move = move.x * cameraTransform.right.normalized + move.z * cameraTransform.forward.normalized;
 
         // Check if player is sprinting
@@ -118,9 +135,16 @@ public class PlayerController : MonoBehaviour
         move.y = 0f;
         controller.Move(move * Time.deltaTime * (isSprinting ? playerSpeed * sprintSpeedMultiplier : playerSpeed));
 
+        //BLEND Strafe animation
+        animator.SetFloat(moveXAnimationParameterId,currentAnimationBlend.x);
+        animator.SetFloat(moveZAnimationParameterId, currentAnimationBlend.y);
+
         if (jumpAction.triggered && isGrounded)
         {
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -4.0f * gravity);
+
+            //Jumping animation
+            animator.CrossFade(jumpAnimation,animationPlayTransition);
         }
 
         playerVelocity.y += gravity * Time.deltaTime;

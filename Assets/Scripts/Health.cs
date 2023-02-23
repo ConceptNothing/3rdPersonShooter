@@ -37,6 +37,10 @@ public class Health : MonoBehaviour
             Die();
         }
     }
+    public void Heal(float healAmount)
+    {
+        currentHealth += healAmount;
+    }
     private void Die()
     {
         // Handle object death here
