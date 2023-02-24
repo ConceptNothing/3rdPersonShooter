@@ -32,13 +32,17 @@ public class PlayerController : MonoBehaviour
     private Transform bulletParent;
     [SerializeField]
     private float bulletHitMissDistance=25f;
+    [SerializeField]
+    private Transform aimTarget;
+    [SerializeField]
+    private float aimDistance=1.1f;
 
 
     private Transform cameraTransform;
     private PlayerInput playerInput;
     private CharacterController controller;
     private Vector3 playerVelocity;
-    private bool isGrounded;
+    private bool isGrounded; 
     private InputAction moveAction;
     //private InputAction mouseLookAction;
     private InputAction jumpAction;
@@ -56,6 +60,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float animationSmoothTime=0.1f;
     private int jumpAnimation;
+    private int recoilAnimation;
     [SerializeField]
     private float animationPlayTransition=0.1f;
 
@@ -80,6 +85,7 @@ public class PlayerController : MonoBehaviour
         moveXAnimationParameterId = Animator.StringToHash("MoveX");
         moveZAnimationParameterId = Animator.StringToHash("MoveZ");
         jumpAnimation = Animator.StringToHash("Pistol Jump");
+        recoilAnimation = Animator.StringToHash("GunRecoilAnimation");
     }
 
     private void OnEnable()
@@ -95,6 +101,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        aimTarget.position=cameraTransform.position+cameraTransform.forward*aimDistance;
+
         isGrounded = controller.isGrounded;
         if (isGrounded && playerVelocity.y < 0)
         {
@@ -141,7 +149,7 @@ public class PlayerController : MonoBehaviour
 
         if (jumpAction.triggered && isGrounded)
         {
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -4.0f * gravity);
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
 
             //Jumping animation
             animator.CrossFade(jumpAnimation,animationPlayTransition);
@@ -181,5 +189,6 @@ public class PlayerController : MonoBehaviour
             bulletController.Target = cameraTransform.position + cameraTransform.forward * bulletHitMissDistance;
             bulletController.Hit = false; 
         }
+        animator.CrossFade(recoilAnimation,animationPlayTransition);
     }
 }
