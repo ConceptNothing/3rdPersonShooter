@@ -17,8 +17,14 @@ public class GameController : MonoBehaviour
     public float minDistanceFromPlayer = 1f;
     [SerializeField]
     public float maxDistanceFromPlayer = 2f;
-    public float spawnRate = 25f;
+    [SerializeField]
+    private float lootboxSpawnRate = 5;
+    [SerializeField]
+    public float enemySpawnRate = 25f;
+    [SerializeField]
     public float spawnRateIncreasePerScore = 0.1f;
+    [SerializeField]
+    public GameObject lootboxPrefab;
 
     private CinemachineVirtualCamera[] cameras;
 
@@ -31,11 +37,13 @@ public class GameController : MonoBehaviour
     {
         cameras = CinemachineVirtualCamera.FindObjectsOfType<CinemachineVirtualCamera>(true);
         StartCoroutine(SpawnEnemyCoroutine());
+        StartCoroutine(SpawnLootBoxCoroutine());
     }
 
     // Update is called once per frame
     void Update()
     {
+
         enemiesGameObjects = EnemyController.FindObjectsOfType<EnemyController>(true);
         players=PlayerController.FindObjectsOfType<PlayerController>(true);
         foreach(var player in players)
@@ -58,20 +66,20 @@ public class GameController : MonoBehaviour
             }
         }
     }
-    void SpawnEnemy()
+    void SpawnObject(GameObject obj)
     {
         Vector2 randomCirclePoint = Random.insideUnitCircle.normalized * Random.Range(minDistanceFromPlayer, maxDistanceFromPlayer);
-        Vector3 enemySpawnPosition = new Vector3(transform.position.x + randomCirclePoint.x, 0f, transform.position.z + randomCirclePoint.y);
+        Vector3 objectSpawnPosition = new Vector3(transform.position.x + randomCirclePoint.x, 0f, transform.position.z + randomCirclePoint.y);
         RaycastHit hit;
-        if (Physics.Raycast(new Vector3(enemySpawnPosition.x, 50f, enemySpawnPosition.z), Vector3.down, out hit))
+        if (Physics.Raycast(new Vector3(objectSpawnPosition.x, 50f, objectSpawnPosition.z), Vector3.down, out hit))
         {
-            enemySpawnPosition.y = hit.point.y+15;
-            Debug.Log("Enemy spawned at: " + enemySpawnPosition);
-            GameObject newEnemy = Instantiate(enemyPrefab, enemySpawnPosition, Quaternion.identity);
+            objectSpawnPosition.y = hit.point.y+15;
+            Debug.Log("Object spawned at: " + objectSpawnPosition);
+            GameObject newObject = Instantiate(obj, objectSpawnPosition, Quaternion.identity);
         }
         else
         {
-            Debug.Log("Failed to spawn enemy at: " + enemySpawnPosition);
+            Debug.Log("Failed to spawn object at: " + objectSpawnPosition);
         }
     }
     private IEnumerator SpawnEnemyCoroutine()
@@ -83,18 +91,27 @@ public class GameController : MonoBehaviour
                 yield return new WaitForSeconds(10.0f);
                 continue;
             }
-                yield return new WaitForSeconds(spawnRate);
+                yield return new WaitForSeconds(enemySpawnRate);
 
-            SpawnEnemy();
+            SpawnObject(enemyPrefab);
 
-            if (spawnRate > 0.1f)
+            if (enemySpawnRate > 0.1f)
             {
-                spawnRate -= spawnRateIncreasePerScore * score;
+                enemySpawnRate -= spawnRateIncreasePerScore * score;
             }
             else
             {
-                spawnRate = 0.1f;
+                enemySpawnRate = 0.1f;
             }
+        }
+    }
+    private IEnumerator SpawnLootBoxCoroutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(lootboxSpawnRate);
+
+            SpawnObject(lootboxPrefab);
         }
     }
     public void IncreaseScore(int amount)

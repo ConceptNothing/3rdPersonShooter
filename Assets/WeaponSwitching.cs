@@ -6,9 +6,11 @@ public class WeaponSwitching : MonoBehaviour
     public GameObject[] weapons;
     public int currentWeaponIndex = 0;
     public Rig[] armRigs;
+    public Weapon CurrentWeapon { get; private set; }
     void Start()
     {
         weapons[currentWeaponIndex].SetActive(true);
+        CurrentWeapon = weapons[currentWeaponIndex].GetComponent<Weapon>();
         armRigs[currentWeaponIndex].weight += 1f;
     }
 
@@ -30,6 +32,7 @@ public class WeaponSwitching : MonoBehaviour
             // Activate the new weapon & arm rig
             weapons[currentWeaponIndex].SetActive(true);
             armRigs[currentWeaponIndex].weight += 1f;
+            CurrentWeapon = weapons[currentWeaponIndex].GetComponent<Weapon>();
         }
     }
 }

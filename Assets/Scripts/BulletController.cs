@@ -7,23 +7,23 @@ public class BulletController : MonoBehaviour
     [SerializeField]
     private GameObject bulletDecal;
     [SerializeField]
-    private float damage=25f;
-    [SerializeField]
-    private float speed = 10f;
-    [SerializeField]
     private float timeToDestroy = 3f;
 
+    [HideInInspector]
+    public float BulletDamage { get; set; } = 10f;
+    [HideInInspector]
+    public float BulletSpeed { get; set; } = 10f;
     public Vector3 Target { get; set; }
     public bool Hit { get; set; }
      void OnEnable()
     {
-        GetComponent<Rigidbody>().velocity = transform.forward * speed;
+        GetComponent<Rigidbody>().velocity = transform.forward * BulletSpeed;
         Destroy(gameObject, timeToDestroy);
     }
 
      void Update()
     {
-        transform.position = Vector3.MoveTowards(transform.position, Target, speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, Target, BulletSpeed * Time.deltaTime);
 
         //.01f is small threshhold to represent near target distance
         //if threshhold is 0 it might never reach the target exactly
@@ -43,7 +43,7 @@ public class BulletController : MonoBehaviour
         if (collision.gameObject.tag == "Player" || collision.gameObject.tag == "Enemy")
         {
             var health = collision.gameObject.GetComponent<Health>();
-            health.TakeDamage(damage);
+            health.TakeDamage(BulletDamage);
         }
         Destroy(gameObject);
     }

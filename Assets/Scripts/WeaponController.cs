@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 public class WeaponController : MonoBehaviour
@@ -15,7 +17,10 @@ public class WeaponController : MonoBehaviour
     private Transform bulletParent;
     [SerializeField]
     private float bulletHitMissDistance = 25f;
+    [SerializeField]
+    private AmmoAmountUI ammoUi;
 
+    private Weapon currentWeapon;
     private PlayerInput playerInput;
     private InputAction shootAction;
     private WeaponSwitching weaponSwitch;
@@ -23,6 +28,9 @@ public class WeaponController : MonoBehaviour
     private Transform cameraTransform;
     private Animator animator;
     private int recoilAnimation;
+    private float timeSinceLastShot;
+    private bool isShooting;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -32,41 +40,77 @@ public class WeaponController : MonoBehaviour
         weaponSwitch = GetComponent<WeaponSwitching>();
         recoilAnimation = Animator.StringToHash("GunRecoilAnimation");
         cameraTransform = Camera.main.transform;
+        currentWeapon = weaponSwitch.CurrentWeapon;
     }
 
     private void OnEnable()
     {
-        shootAction.performed += _ => Shoot();
+        shootAction.started += _ => StartShooting();
+        shootAction.canceled += _ => StopShooting();
     }
 
     private void OnDisable()
     {
-        shootAction.performed -= _ => Shoot();
+        shootAction.started -= _ => StartShooting();
+        shootAction.canceled -= _ => StopShooting();
     }
     // Update is called once per frame
     void Update()
     {
+        //////In case if player gained more ammo from lootbox that max amount of ammo
+        ////if (currentWeapon.WeaponCurrentAmmo > currentWeapon.WeaponMaxAmmoAmount)
+        ////{
+        ////    currentWeapon.WeaponCurrentAmmo = currentWeapon.WeaponMaxAmmoAmount;
+        ////}
+
+        ammoUi.Weapon = currentWeapon;
+        timeSinceLastShot += Time.deltaTime;
         barrelTransform = weaponSwitch.weapons[weaponSwitch.currentWeaponIndex].transform.Find("Barrel");
-        int? log = weaponSwitch.currentWeaponIndex;
+        currentWeapon = weaponSwitch.CurrentWeapon;
+        if (isShooting && timeSinceLastShot >= currentWeapon.WeaponShootingRate)
+        {
+            Shoot();
+        }
+
+        timeSinceLastShot += Time.deltaTime;
+        barrelTransform = weaponSwitch.weapons[weaponSwitch.currentWeaponIndex].transform.Find("Barrel");
+        currentWeapon = weaponSwitch.CurrentWeapon;
     }
     public void Shoot()
     {
-        RaycastHit hit;
-        GameObject bullet = GameObject.Instantiate(bulletPrefab, barrelTransform.position, Quaternion.identity, bulletParent);
-        BulletController bulletController = bullet.GetComponent<BulletController>();
-        //if there has been an target (ADD LAYER MASK IF NEEDED AT THE END OF THE Physics.Raycast)
-        if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, Mathf.Infinity))
+        if (currentWeapon.WeaponCurrentAmmo > 0)
         {
-            var sw = hit.rigidbody;
-            bulletController.Target = hit.point;
-            bulletController.Hit = true;
+            currentWeapon.WeaponCurrentAmmo--;
+            RaycastHit hit;
+            GameObject bullet = GameObject.Instantiate(bulletPrefab, barrelTransform.position, Quaternion.identity, bulletParent);
+            BulletController bulletController = bullet.GetComponent<BulletController>();
+            bulletController.BulletDamage = currentWeapon.WeaponDamage;
+            bulletController.BulletSpeed = currentWeapon.WeaponBulletSpeed;
+            //if there has been an target (ADD LAYER MASK IF NEEDED AT THE END OF THE Physics.Raycast)
+            if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, Mathf.Infinity))
+            {
+                var sw = hit.rigidbody;
+                bulletController.Target = hit.point;
+                bulletController.Hit = true;
+            }
+            //if shot was made in the sky
+            else
+            {
+                bulletController.Target = cameraTransform.position + cameraTransform.forward * bulletHitMissDistance;
+                bulletController.Hit = false;
+            }
+            animator.CrossFade(recoilAnimation, animationPlayTransition);
+            timeSinceLastShot = 0f;
         }
-        //if shot was made in the sky
-        else
-        {
-            bulletController.Target = cameraTransform.position + cameraTransform.forward * bulletHitMissDistance;
-            bulletController.Hit = false;
-        }
-        animator.CrossFade(recoilAnimation, animationPlayTransition);
+    }
+    private void StartShooting()
+    {
+        isShooting = true;
+        Shoot();
+    }
+
+    private void StopShooting()
+    {
+        isShooting = false;
     }
 }
