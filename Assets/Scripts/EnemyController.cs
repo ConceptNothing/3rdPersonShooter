@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class EnemyController : MonoBehaviour
 {
@@ -55,7 +56,7 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            if (Physics.Raycast(transform.position, (target.transform.position - transform.position), out hit, sightRange))
+            if (Physics.Raycast(transform.position, (target.transform.position - transform.position ), out hit, sightRange))
             {
                 if (!hit.collider.CompareTag("Player"))
                 {

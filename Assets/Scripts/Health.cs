@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -43,6 +44,14 @@ public class Health : MonoBehaviour
     }
     private void Die()
     {
-        // Handle object death here
+
+        if (gameObject.tag=="Enemy")
+        {
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
     }
 }
