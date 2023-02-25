@@ -8,18 +8,20 @@ public class BulletController : MonoBehaviour
     private GameObject bulletDecal;
     [SerializeField]
     private float damage=25f;
+    [SerializeField]
     private float speed = 10f;
+    [SerializeField]
     private float timeToDestroy = 3f;
 
     public Vector3 Target { get; set; }
     public bool Hit { get; set; }
-    private void OnEnable()
+     void OnEnable()
     {
         GetComponent<Rigidbody>().velocity = transform.forward * speed;
         Destroy(gameObject, timeToDestroy);
     }
 
-    void Update()
+     void Update()
     {
         transform.position = Vector3.MoveTowards(transform.position, Target, speed * Time.deltaTime);
 
@@ -31,7 +33,7 @@ public class BulletController : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    private void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter(Collision collision)
     {
         ContactPoint contactPoint = collision.GetContact(0);
         GameObject.Instantiate(bulletDecal, contactPoint.point+contactPoint.normal*.0001f,Quaternion.LookRotation(contactPoint.normal));
@@ -43,6 +45,21 @@ public class BulletController : MonoBehaviour
             var health = collision.gameObject.GetComponent<Health>();
             health.TakeDamage(damage);
         }
+        Destroy(gameObject);
+    }
+    void OnTriggerEnter(Collider other)
+    {
+        // Get the closest point on the other collider's bounds to the trigger collider's position
+        Vector3 contactPoint = other.ClosestPointOnBounds(transform.position);
+
+        //Adjusted so bullet decal is properly rotated and positioned when colliding with floor or other non rigid bodies
+        contactPoint.y = 1.04f;
+        Quaternion rotation = Quaternion.Euler(100.0f, 0.0f, 0.0f);
+        // Instantiate a bullet decal at the contact point
+        GameObject.Instantiate(bulletDecal, contactPoint + other.transform.forward * .0001f, rotation);
+
+        Debug.Log("Bullet collided with " + other.gameObject.name);
+
         Destroy(gameObject);
     }
 }

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3094868205605253088}
   - component: {fileID: 4943464996824559697}
+  - component: {fileID: -2461193442763079684}
   m_Layer: 0
   m_Name: bulletHole
   m_TagString: Untagged
@@ -84,3 +85,17 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-2461193442763079684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1657563776435912803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07824a51cf4e1b34aabdfd275779a4c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletPrefab: {fileID: 1657563776435912803}
+  timeToDestroy: 2

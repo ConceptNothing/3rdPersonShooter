@@ -25,18 +25,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float staminaRegen=10f;
     [SerializeField]
-    private GameObject bulletPrefab;
-    [SerializeField]
-    private Transform barrelTransform;
-    [SerializeField]
-    private Transform bulletParent;
-    [SerializeField]
-    private float bulletHitMissDistance=25f;
-    [SerializeField]
     private Transform aimTarget;
     [SerializeField]
     private float aimDistance=1.1f;
-
 
     private Transform cameraTransform;
     private PlayerInput playerInput;
@@ -46,11 +37,11 @@ public class PlayerController : MonoBehaviour
     private InputAction moveAction;
     //private InputAction mouseLookAction;
     private InputAction jumpAction;
-    //private InputAction aimAction;
+    private InputAction aimAction;
     private InputAction sprintAction;
-    private InputAction shootAction;
     private bool isSprinting;
     private float currentStamina;
+
 
     private Animator animator;
     private int moveXAnimationParameterId;
@@ -60,9 +51,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float animationSmoothTime=0.1f;
     private int jumpAnimation;
-    private int recoilAnimation;
     [SerializeField]
     private float animationPlayTransition=0.1f;
+
+    
 
     // Start is called before the first frame update
     void Awake()
@@ -70,13 +62,10 @@ public class PlayerController : MonoBehaviour
         controller=GetComponent<CharacterController>();
         playerInput=GetComponent<PlayerInput>();
         moveAction=playerInput.actions["Move"];
-        //mouseLookAction = playerInput.actions["MouseLook"];
         jumpAction = playerInput.actions["Jump"];
-        //aimAction = playerInput.actions["Aim"];
         sprintAction = playerInput.actions["Sprint"];
-        shootAction = playerInput.actions["Shoot"];
         cameraTransform= Camera.main.transform;
-
+        aimAction = playerInput.actions["Aim"];
         Cursor.lockState=CursorLockMode.Locked;
         currentStamina = maxStamina;
 
@@ -85,17 +74,6 @@ public class PlayerController : MonoBehaviour
         moveXAnimationParameterId = Animator.StringToHash("MoveX");
         moveZAnimationParameterId = Animator.StringToHash("MoveZ");
         jumpAnimation = Animator.StringToHash("Pistol Jump");
-        recoilAnimation = Animator.StringToHash("GunRecoilAnimation");
-    }
-
-    private void OnEnable()
-    {
-        shootAction.performed += _ => Shoot();
-    }
-
-    private void OnDisable()
-    {
-        shootAction.performed -= _ => Shoot();
     }
 
     // Update is called once per frame
@@ -170,25 +148,5 @@ public class PlayerController : MonoBehaviour
     public float GetMaxStamina()
     {
         return maxStamina;
-    }
-    private void Shoot()
-    {
-        RaycastHit hit;
-        GameObject bullet = GameObject.Instantiate(bulletPrefab, barrelTransform.position, Quaternion.identity, bulletParent);
-        BulletController bulletController = bullet.GetComponent<BulletController>();
-        //if there has been an target (ADD LAYER MASK IF NEEDED AT THE END OF THE Physics.Raycast)
-        if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, Mathf.Infinity))
-        {
-            var sw = hit.rigidbody;
-            bulletController.Target = hit.point;
-            bulletController.Hit = true;
-        }
-        //if shot was made in the sky
-        else
-        {
-            bulletController.Target = cameraTransform.position + cameraTransform.forward * bulletHitMissDistance;
-            bulletController.Hit = false; 
-        }
-        animator.CrossFade(recoilAnimation,animationPlayTransition);
     }
 }

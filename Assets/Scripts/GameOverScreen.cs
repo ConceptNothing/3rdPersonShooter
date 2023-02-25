@@ -9,16 +9,9 @@ public class GameOverScreen : MonoBehaviour
     private Text pointsText;
     [SerializeField]
     private Text gameOverScreenText;
-    public void Setup(int score,bool isWin)
+    public void Setup(int score)
     {
-        if(isWin)
-        {
-            gameOverScreenText.text = "YOU WON!";
-        }
-        else
-        {
             gameObject.SetActive(true);
             pointsText.text = score.ToString() + " Points";
-        }
     }
 }

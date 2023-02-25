@@ -112,6 +112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletDecal: {fileID: 1657563776435912803, guid: 12ef97a3a35150e47869898c968bc601, type: 3}
+  damage: 25
 --- !u!54 &52468348824174038
 Rigidbody:
   m_ObjectHideFlags: 0

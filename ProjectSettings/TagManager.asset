@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - CatchZone
   - HealthBox
+  - Weapon
   layers:
   - Default
   - TransparentFX

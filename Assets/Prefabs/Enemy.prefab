@@ -320,7 +320,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4458863631371706994}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.1, y: 1.89, z: -1.1980864}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -420,15 +420,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5b8834171c3eb7499177a038bd969d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 1
-  sightRange: 20
-  detectionRange: 20
+  maxSpeed: 2
+  sightRange: 200
+  detectionRange: 200
   rb: {fileID: 4458863631371706995}
   target: {fileID: 0}
   bulletPrefab: {fileID: 1189028658647128719, guid: f485225f2abf5cf40850ee9c34f4e1fd, type: 3}
   barrelTransform: {fileID: 4458863632263369259}
   bulletParent: {fileID: 0}
-  fireRate: 2
+  fireRate: 0.6
 --- !u!114 &4458863631371706997
 MonoBehaviour:
   m_ObjectHideFlags: 0
