@@ -1,10 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
-using UnityEditor.SearchService;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Interactions;
+
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 public class WeaponController : MonoBehaviour
@@ -57,11 +53,6 @@ public class WeaponController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //////In case if player gained more ammo from lootbox that max amount of ammo
-        ////if (currentWeapon.WeaponCurrentAmmo > currentWeapon.WeaponMaxAmmoAmount)
-        ////{
-        ////    currentWeapon.WeaponCurrentAmmo = currentWeapon.WeaponMaxAmmoAmount;
-        ////}
 
         ammoUi.Weapon = currentWeapon;
         timeSinceLastShot += Time.deltaTime;
@@ -102,6 +93,10 @@ public class WeaponController : MonoBehaviour
             animator.CrossFade(recoilAnimation, animationPlayTransition);
             timeSinceLastShot = 0f;
         }
+        else
+        {
+            Debug.LogError("NO AMMO!");
+        }
     }
     private void StartShooting()
     {
@@ -112,5 +107,14 @@ public class WeaponController : MonoBehaviour
     private void StopShooting()
     {
         isShooting = false;
+    }
+    public void AddAmmo(int amount)
+    {
+        currentWeapon.WeaponCurrentAmmo += amount;
+        //In case if player gained more ammo from lootbox than max amount of ammo
+        if (currentWeapon.WeaponCurrentAmmo > currentWeapon.WeaponMaxAmmoAmount)
+        {
+            currentWeapon.WeaponCurrentAmmo = currentWeapon.WeaponMaxAmmoAmount;
+        }
     }
 }

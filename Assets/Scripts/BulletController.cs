@@ -35,6 +35,13 @@ public class BulletController : MonoBehaviour
     }
     void OnCollisionEnter(Collision collision)
     {
+        int bulletLayer = LayerMask.NameToLayer("Bullet");
+        int lootLayer = LayerMask.NameToLayer("LootBox");
+        if (collision.gameObject.layer == bulletLayer||collision.gameObject.layer==lootLayer)
+        {
+            // Ignore collision with other bullets & loot boxes
+            return;
+        }
         ContactPoint contactPoint = collision.GetContact(0);
         GameObject.Instantiate(bulletDecal, contactPoint.point+contactPoint.normal*.0001f,Quaternion.LookRotation(contactPoint.normal));
         Debug.Log("Bullet collided with " + collision.gameObject.name);

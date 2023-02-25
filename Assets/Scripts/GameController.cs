@@ -1,10 +1,6 @@
 using Cinemachine;
-using Mono.Cecil.Cil;
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 using Random = UnityEngine.Random;
 
 public class GameController : MonoBehaviour
@@ -24,8 +20,9 @@ public class GameController : MonoBehaviour
     [SerializeField]
     public float spawnRateIncreasePerScore = 0.1f;
     [SerializeField]
-    public GameObject lootboxPrefab;
-
+    private LootBoxAmmoController lootBoxAmmo;
+    [SerializeField]
+    private LootBoxHpController lootBoxHp;
     private CinemachineVirtualCamera[] cameras;
 
     EnemyController[] enemiesGameObjects;
@@ -111,7 +108,15 @@ public class GameController : MonoBehaviour
         {
             yield return new WaitForSeconds(lootboxSpawnRate);
 
-            SpawnObject(lootboxPrefab);
+            var randNum = Random.Range(0f, 1f);
+            if (randNum > 0.5f)
+            {
+                SpawnObject(lootBoxAmmo.gameObject); 
+            }
+            else
+            {
+                SpawnObject(lootBoxHp.gameObject);
+            }
         }
     }
     public void IncreaseScore(int amount)

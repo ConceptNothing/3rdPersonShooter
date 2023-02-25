@@ -8,7 +8,7 @@ public class Health : MonoBehaviour
     [SerializeField]
     private float maxHealth=100f;
     [SerializeField]
-    private GameObject gameObject;
+    private GameObject LivingObject;
     private float currentHealth;
     // Start is called before the first frame update
     void Start()

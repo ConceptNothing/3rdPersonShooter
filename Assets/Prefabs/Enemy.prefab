@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4458863630764097891}
   - component: {fileID: 4458863630764097890}
   - component: {fileID: 4458863630764097901}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Pistol
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -442,7 +442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  gameObject: {fileID: 4458863631371706994}
+  LivingObject: {fileID: 0}
 --- !u!1 &4458863632263369258
 GameObject:
   m_ObjectHideFlags: 0
@@ -452,7 +452,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4458863632263369259}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Barrel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
