@@ -33,6 +33,8 @@ public class EnemyController : MonoBehaviour
     private bool isVisible;
     private float bulletHitMissDistance=25f;
     private LayerMask layerMask;
+    private Vector3 lastKnownPlayerPosition;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -50,6 +52,7 @@ public class EnemyController : MonoBehaviour
                 if (hitCollider.CompareTag("Player"))
                 {
                     target = hitCollider.gameObject;
+                    lastKnownPlayerPosition = target.transform.position;
                     isVisible = true;
                 }
             }
@@ -64,19 +67,30 @@ public class EnemyController : MonoBehaviour
                 }
                 else
                 {
+                    lastKnownPlayerPosition = target.transform.position;
+
                     //Get the direction
                     var heading = target.transform.position - transform.position;
                     var distance = heading.magnitude;
                     var direction = heading / distance;
 
                     //move to the player
-                    Vector3 move = new Vector3(direction.x * speed, direction.y*speed, direction.z * speed);
+                    Vector3 move = new Vector3(direction.x * speed, direction.y * speed, direction.z * speed);
                     rb.velocity = move;
                     transform.forward = move;
 
-                    //Shoot
                     Shoot(fireRate);
                 }
+            }else
+            {
+                // if the target is not visible, move towards the last known position
+                var heading = lastKnownPlayerPosition - transform.position;
+                var distance = heading.magnitude;
+                var direction = heading / distance;
+
+                Vector3 move = new Vector3(direction.x * speed, direction.y * speed, direction.z * speed);
+                rb.velocity = move;
+                transform.forward = move;
             }
         }
     }
@@ -90,7 +104,7 @@ public class EnemyController : MonoBehaviour
             GameObject bullet = GameObject.Instantiate(bulletPrefab, barrelTransform.position, Quaternion.identity, bulletParent);
             BulletController bulletController = bullet.GetComponent<BulletController>();
             //if there has been an target (ADD LAYER MASK IF NEEDED AT THE END OF THE Physics.Raycast)
-            if (Physics.Raycast(barrelTransform.position, barrelTransform.forward, out hit, Mathf.Infinity,layerMask))
+            if (Physics.Raycast(barrelTransform.position, barrelTransform.forward, out hit, Mathf.Infinity))
             {
                 if (hit.collider != null)
                 {

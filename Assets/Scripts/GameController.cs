@@ -48,7 +48,7 @@ public class GameController : MonoBehaviour
             if (!player.gameObject.activeSelf)
             {
                 Destroy(player);
-                GameOver(true);
+                GameOver();
             }
         }
         if (enemiesGameObjects.Length > 0)
@@ -124,12 +124,21 @@ public class GameController : MonoBehaviour
         score += amount;
     }
 
-    public void GameOver(bool isWin)
+    public void GameOver()
     {
+        var isWin = false;
         foreach(var cam in cameras)
         {
             cam.gameObject.SetActive(false);
         }
-        gameOverScreen.Setup(score);
+
+        int previousHighScore = PlayerPrefs.GetInt("HighScore", 0);
+
+        if (score > previousHighScore)
+        {
+            PlayerPrefs.SetInt("HighScore", score);
+            isWin= true;
+        }
+        gameOverScreen.Setup(score,isWin);
     }
 }

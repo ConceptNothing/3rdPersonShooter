@@ -77,10 +77,17 @@ public class WeaponController : MonoBehaviour
             BulletController bulletController = bullet.GetComponent<BulletController>();
             bulletController.BulletDamage = currentWeapon.WeaponDamage;
             bulletController.BulletSpeed = currentWeapon.WeaponBulletSpeed;
+
+            TrailRenderer trailRenderer = bullet.GetComponentInChildren<TrailRenderer>();
+            trailRenderer.emitting = true;
+
+            trailRenderer.time = 0.5f;
+            trailRenderer.startWidth = 0.1f;
+            trailRenderer.endWidth = 0.01f;
+
             //if there has been an target (ADD LAYER MASK IF NEEDED AT THE END OF THE Physics.Raycast)
             if (Physics.Raycast(cameraTransform.position, cameraTransform.forward, out hit, Mathf.Infinity))
             {
-                var sw = hit.rigidbody;
                 bulletController.Target = hit.point;
                 bulletController.Hit = true;
             }

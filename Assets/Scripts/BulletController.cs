@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class BulletController : MonoBehaviour
@@ -8,7 +9,6 @@ public class BulletController : MonoBehaviour
     private GameObject bulletDecal;
     [SerializeField]
     private float timeToDestroy = 3f;
-
     [HideInInspector]
     public float BulletDamage { get; set; } = 10f;
     [HideInInspector]
@@ -56,13 +56,11 @@ public class BulletController : MonoBehaviour
     }
     void OnTriggerEnter(Collider other)
     {
-        // Get the closest point on the other collider's bounds to the trigger collider's position
         Vector3 contactPoint = other.ClosestPointOnBounds(transform.position);
 
-        //Adjusted so bullet decal is properly rotated and positioned when colliding with floor or other non rigid bodies
         contactPoint.y = 1.04f;
         Quaternion rotation = Quaternion.Euler(100.0f, 0.0f, 0.0f);
-        // Instantiate a bullet decal at the contact point
+
         GameObject.Instantiate(bulletDecal, contactPoint + other.transform.forward * .0001f, rotation);
 
         Debug.Log("Bullet collided with " + other.gameObject.name);
