@@ -1,16 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 public class LootBoxAmmoController : MonoBehaviour
 {
-    public AmmoBoxController ammoBox;
-    // Start is called before the first frame update
-
+    WeaponController weaponController;
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
+            var weapon = collision.gameObject.GetComponent<WeaponController>();
+            weaponController = weapon;
+            weaponController.AddAmmo(Random.Range(20, 30));
             Destroy(gameObject);
         }
     }

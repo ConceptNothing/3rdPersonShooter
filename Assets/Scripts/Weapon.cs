@@ -1,18 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
-    public int WeaponCurrentAmmo;
-
-    public int WeaponMaxAmmoAmount;
-    public float WeaponBulletSpeed;
-    public float WeaponShootingRate;
-    public float WeaponDamage;
+    public int CurrentAmmo;
+    public int MaxAmmoAmount;
+    public int ClipSize;
+    public float BulletSpeed;
+    public float ShootingRate;
+    public float Damage;
+    [HideInInspector]
+    public int CurrentClipAmmo;
+    public float ReloadSpeed;
 
     private void Awake()
     {
-        WeaponCurrentAmmo = WeaponMaxAmmoAmount;
+        CurrentAmmo = MaxAmmoAmount;
+        CurrentClipAmmo = ClipSize;
     }
 }
