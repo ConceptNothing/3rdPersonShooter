@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class BulletController : MonoBehaviour
@@ -47,7 +44,7 @@ public class BulletController : MonoBehaviour
         Debug.Log("Bullet collided with " + collision.gameObject.name);
 
         //every bullet collision deals damage
-        if (collision.gameObject.tag == "Player" || collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.CompareTag("Player") || collision.gameObject.CompareTag("Enemy"))
         {
             var health = collision.gameObject.GetComponent<Health>();
             health.TakeDamage(BulletDamage);
@@ -67,4 +64,5 @@ public class BulletController : MonoBehaviour
 
         Destroy(gameObject);
     }
+
 }

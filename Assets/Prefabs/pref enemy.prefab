@@ -154,7 +154,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1088805636064279512}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: -4.4, z: 6.04}
+  m_LocalPosition: {x: -0, y: -4.4, z: 8.79}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -316,7 +316,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthBar: {fileID: 1504775029352030445}
-  objectHealth: {fileID: 4813639948584035000}
+  objectHealth: {fileID: -5415832905153101226}
 --- !u!1 &1504775029384562752
 GameObject:
   m_ObjectHideFlags: 0
@@ -1040,12 +1040,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5298111862377510968}
-  - component: {fileID: 4813639948584034949}
-  - component: {fileID: 4813639948584034950}
-  - component: {fileID: 4813639948584034951}
-  - component: {fileID: 4813639948584035000}
+  - component: {fileID: 5739946948784571831}
+  - component: {fileID: 5072947527620882950}
+  - component: {fileID: -5415832905153101226}
+  - component: {fileID: 1056464574913615458}
   m_Layer: 11
-  m_Name: SkullEnemy
+  m_Name: pref enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1059,8 +1059,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4813639948584034946}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.246, z: 0}
-  m_LocalScale: {x: 0.05925943, y: 0.05925943, z: 0.05925943}
+  m_LocalPosition: {x: -0.071143, y: 2.2831, z: 0.015703}
+  m_LocalScale: {x: 0.075635254, y: 0.075635254, z: 0.075635254}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1088805636064279513}
@@ -1068,28 +1068,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4813639948584034949
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4813639948584034946}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5b8834171c3eb7499177a038bd969d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxSpeed: 1
-  sightRange: 400
-  detectionRange: 200
-  rb: {fileID: 4813639948584034950}
-  target: {fileID: 0}
-  bulletPrefab: {fileID: 1189028658647128719, guid: f485225f2abf5cf40850ee9c34f4e1fd, type: 3}
-  barrelTransform: {fileID: 1088805636064279513}
-  bulletParent: {fileID: 0}
-  fireRate: 1
---- !u!54 &4813639948584034950
+--- !u!54 &5739946948784571831
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1105,20 +1084,28 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &4813639948584034951
-BoxCollider:
+--- !u!114 &5072947527620882950
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4813639948584034946}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 10.18, y: 8.74, z: 23.5}
-  m_Center: {x: 0, y: -2.1, z: -12.88}
---- !u!114 &4813639948584035000
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5b8834171c3eb7499177a038bd969d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxSpeed: 3
+  sightRange: 400
+  detectionRange: 400
+  rb: {fileID: 5739946948784571831}
+  target: {fileID: 0}
+  bulletPrefab: {fileID: 1189028658647128719, guid: f485225f2abf5cf40850ee9c34f4e1fd, type: 3}
+  barrelTransform: {fileID: 1088805636064279513}
+  bulletParent: {fileID: 0}
+  fireRate: 1
+--- !u!114 &-5415832905153101226
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1130,8 +1117,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 388ae5a2972d8ba468e13a32edc201be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 150
+  maxHealth: 200
   LivingObject: {fileID: 0}
+--- !u!65 &1056464574913615458
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4813639948584034946}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 15.8, y: 14.26, z: 22.62}
+  m_Center: {x: 0, y: -0.72, z: -8.24}
 --- !u!1 &4904102824829300317
 GameObject:
   m_ObjectHideFlags: 0

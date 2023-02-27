@@ -9,6 +9,7 @@ TagManager:
   - CatchZone
   - HealthBox
   - Weapon
+  - Loot
   layers:
   - Default
   - TransparentFX

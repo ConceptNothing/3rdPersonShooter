@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -26,6 +28,8 @@ public class WeaponController : MonoBehaviour
     private int recoilAnimation;
     private float timeSinceLastShot;
     private bool isShooting;
+    private InputAction reloadAction;
+    private bool isReloading;
 
     // Start is called before the first frame update
     void Awake()
@@ -37,28 +41,36 @@ public class WeaponController : MonoBehaviour
         recoilAnimation = Animator.StringToHash("GunRecoilAnimation");
         cameraTransform = Camera.main.transform;
         currentWeapon = weaponSwitch.CurrentWeapon;
+        ammoUi.Weapon = currentWeapon;
+        reloadAction = playerInput.actions["Reload"];
     }
 
     private void OnEnable()
     {
         shootAction.started += _ => StartShooting();
         shootAction.canceled += _ => StopShooting();
+        reloadAction.started += _ => Reload();
     }
 
     private void OnDisable()
     {
         shootAction.started -= _ => StartShooting();
         shootAction.canceled -= _ => StopShooting();
+        reloadAction.started -= _ => Reload();
     }
     // Update is called once per frame
     void Update()
     {
-
         ammoUi.Weapon = currentWeapon;
         timeSinceLastShot += Time.deltaTime;
         barrelTransform = weaponSwitch.weapons[weaponSwitch.currentWeaponIndex].transform.Find("Barrel");
         currentWeapon = weaponSwitch.CurrentWeapon;
-        if (isShooting && timeSinceLastShot >= currentWeapon.WeaponShootingRate)
+
+        if (isReloading)
+        {
+            isShooting = false;
+        }
+        if (isShooting && !isReloading && timeSinceLastShot >= currentWeapon.ShootingRate)
         {
             Shoot();
         }
@@ -69,14 +81,14 @@ public class WeaponController : MonoBehaviour
     }
     public void Shoot()
     {
-        if (currentWeapon.WeaponCurrentAmmo > 0)
+        if (currentWeapon.CurrentClipAmmo > 0)
         {
-            currentWeapon.WeaponCurrentAmmo--;
+            currentWeapon.CurrentClipAmmo--;
             RaycastHit hit;
             GameObject bullet = GameObject.Instantiate(bulletPrefab, barrelTransform.position, Quaternion.identity, bulletParent);
             BulletController bulletController = bullet.GetComponent<BulletController>();
-            bulletController.BulletDamage = currentWeapon.WeaponDamage;
-            bulletController.BulletSpeed = currentWeapon.WeaponBulletSpeed;
+            bulletController.BulletDamage = currentWeapon.Damage;
+            bulletController.BulletSpeed = currentWeapon.BulletSpeed;
 
             TrailRenderer trailRenderer = bullet.GetComponentInChildren<TrailRenderer>();
             trailRenderer.emitting = true;
@@ -102,8 +114,34 @@ public class WeaponController : MonoBehaviour
         }
         else
         {
-            Debug.LogError("NO AMMO!");
+            Debug.LogError("NO AMMO! RELOAD!");
+            Reload();
         }
+    }
+
+    private void Reload()
+    {
+        if (!isReloading && currentWeapon.CurrentClipAmmo < currentWeapon.ClipSize && currentWeapon.CurrentAmmo > 0)
+        {
+            StartCoroutine(ReloadCoroutine());
+        }
+    }
+    private IEnumerator ReloadCoroutine()
+    {
+        isReloading = true;
+
+        yield return new WaitForSeconds(currentWeapon.ReloadSpeed);
+
+        int bulletsToReload = currentWeapon.ClipSize - currentWeapon.CurrentClipAmmo;
+        if (bulletsToReload > currentWeapon.CurrentAmmo)
+        {
+            bulletsToReload = currentWeapon.CurrentAmmo;
+        }
+
+        currentWeapon.CurrentAmmo -= bulletsToReload;
+        currentWeapon.CurrentClipAmmo += bulletsToReload;
+
+        isReloading = false;
     }
     private void StartShooting()
     {
@@ -117,11 +155,11 @@ public class WeaponController : MonoBehaviour
     }
     public void AddAmmo(int amount)
     {
-        currentWeapon.WeaponCurrentAmmo += amount;
+        currentWeapon.CurrentAmmo += amount;
         //In case if player gained more ammo from lootbox than max amount of ammo
-        if (currentWeapon.WeaponCurrentAmmo > currentWeapon.WeaponMaxAmmoAmount)
+        if (currentWeapon.CurrentAmmo > currentWeapon.MaxAmmoAmount)
         {
-            currentWeapon.WeaponCurrentAmmo = currentWeapon.WeaponMaxAmmoAmount;
+            currentWeapon.CurrentAmmo = currentWeapon.MaxAmmoAmount;
         }
     }
 }

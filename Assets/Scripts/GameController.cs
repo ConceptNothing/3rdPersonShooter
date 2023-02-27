@@ -14,7 +14,7 @@ public class GameController : MonoBehaviour
     [SerializeField]
     public float maxDistanceFromPlayer = 2f;
     [SerializeField]
-    private float lootboxSpawnRate = 5;
+    private float lootboxSpawnRate = 50f;
     [SerializeField]
     public float enemySpawnRate = 25f;
     [SerializeField]
@@ -23,6 +23,8 @@ public class GameController : MonoBehaviour
     private LootBoxAmmoController lootBoxAmmo;
     [SerializeField]
     private LootBoxHpController lootBoxHp;
+    [SerializeField]
+    private int maxLootBoxes;
     private CinemachineVirtualCamera[] cameras;
 
     EnemyController[] enemiesGameObjects;
@@ -106,8 +108,15 @@ public class GameController : MonoBehaviour
     {
         while (true)
         {
+            if (GameObject.FindGameObjectsWithTag("Loot").Length >= maxLootBoxes)
+            {
+                yield return new WaitForSeconds(10.0f);
+                continue;
+            }
             yield return new WaitForSeconds(lootboxSpawnRate);
 
+            var temp = maxDistanceFromPlayer;
+            maxDistanceFromPlayer /= 2;
             var randNum = Random.Range(0f, 1f);
             if (randNum > 0.5f)
             {
@@ -117,6 +126,7 @@ public class GameController : MonoBehaviour
             {
                 SpawnObject(lootBoxHp.gameObject);
             }
+            maxDistanceFromPlayer= temp;
         }
     }
     public void IncreaseScore(int amount)
